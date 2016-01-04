@@ -1,0 +1,26 @@
+{
+  "name": "alpaca_speech",
+  "version": "1.0.0",
+  "description": "Alpaca Speech",
+  "main": "index.html",
+  "window": {
+    "width": 300,
+    "height": 400,
+    "toolbar": false,
+    "resizable": false,
+    "fullscreen": false
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pietro Passarelli",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "copy-paste": "^1.1.4",
+    "request": "^2.67.0",
+    "say": "pietrop/say.js",
+    "sys": "0.0.1",
+    "translate": "^0.7.0"
+  }
+}

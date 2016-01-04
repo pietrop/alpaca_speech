@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Speech To text OS x</title>
+    <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="css/bootstrap.css">
+
+  </head>
+  <body>
+    <br>
+    <div class="container">
+      <div class="row">
+      <div class="col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-xs-offset-4">
+
+    <!--  <span id="backward" class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+ -->
+
+      <!-- PREVIOUS SENTENCE -->
+<!--       <span id="fast-backward" class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span> -->
+<!-- 
+      <span id="step-backward" class="glyphicon glyphicon-step-backward" aria-hidden="true"></span> -->
+
+
+      <!-- Play and pause interchange -->
+  <!--    <span id="play" href="#" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+ -->
+      <!-- PLAY -->
+      <button  id="play" onclick="play()" type="button" class="btn btn-md btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true" toggle="tooltip" data-placement="top" title="cmd+c  cmd+e" ></span></button> 
+
+      <!-- PAUSE -->
+
+  <!--   -->
+
+      <!-- STOP -->
+
+      <button  id="stop" onclick="stop()" type="button" class="btn btn-md btn-danger" ><span class="glyphicon glyphicon-stop" aria-hidden="true" toggle="tooltip" data-placement="top" title="cmd + e"></span></button>
+      <!--  -->
+ <!--     <span id="step-forward" class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+ -->
+      <!-- NEXT SENTENCE -->
+  <!--     <span id="fast-forward" class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span> -->
+<!-- 
+      <span id="forward" class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+      -->
+      </div> <!-- col -->
+    </div> <!-- row -->
+      <br> 
+      <!-- Speed -->
+     
+    
+    
+    <div class="form-group">
+    <label for="usr">Speed:</label>
+    <!--  -->
+     <button  id="lowerSpeed" onclick="lowerSpeed()" type="button" class="btn btn-xs btn-primary"><span id="bottom" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true" toggle="tooltip" data-placement="top" title="cmd + arrowDown"></span></button>
+ 
+      <button  id="raiseSpeed" onclick="raiseSpeed()" type="button" class="btn btn-xs btn-primary"> <span id="top" class="glyphicon glyphicon-triangle-top" aria-hidden="true" toggle="tooltip" data-placement="top" title="cmd + arrowUp"></span></button>
+    <!--  -->
+    <input type="text" class="form-control" id="speedInput" oninput="updateSpeed()">
+  </div>
+
+
+    <div class="form-group">
+      <label for="comment">Selection:</label>
+      <textarea class="form-control" rows="3" id="textArea" disabled></textarea>
+    </div>
+
+
+
+<div class="form-group" >
+   <label for="sel1"  toggle="tooltip" data-placement="top" title="cmd + 1,2,3,4">Voices:</label>
+ <select class="form-control" id="voices">
+  <option value="Alex">Alex - English</option>
+  <option value="Luca">Luca - Italian</option>
+  <option value="Jorge">Jorge - Spanish</option>
+  <option value="Thomas">Thomas - French</option>
+</select>
+</div>
+
+</div>
+ 
+
+
+
+
+  </div><!--  container -->
+    <!-- btn -->
+
+    <style>
+    /*center element bootstrap*/
+  .center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+    textarea{
+      width: 100%;
+      height: auto;
+       overflow-y: scroll;
+    resize: none;
+    }
+    </style>
+    <!-- jQuery -->
+  <script src="js/jquery.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="js/bootstrap.js"></script>
+    <script>
+//Tooltip initialization
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+    })
+
+// (function(){
+  // var app = require('./app.js');
+  // app.sayHelloInEnglish();
+
+//SHORTCUTS
+// start/stop speaking/reading   Shortcut
+     gui = require('nw.gui');
+  var option = {
+    key : "Ctrl+e",
+    active : function() {
+      play();
+      console.log("Left"); 
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+  var shortcut = new gui.Shortcut(option);
+  gui.App.registerGlobalHotKey(shortcut);
+
+// Lower speed  Shortcut
+  var optionlowerSpeed = {
+     key : "Ctrl+Down",
+    active : function() {
+      lowerSpeed();
+      console.log("lowerSpeed"); 
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+  
+  var shortcutlowerSpeed = new gui.Shortcut(optionlowerSpeed);
+  gui.App.registerGlobalHotKey(shortcutlowerSpeed);
+
+// Increase speed  Shortcut
+  var optionRaiseSpeed = {
+     key : "Ctrl+Up",
+    active : function() {
+      raiseSpeed();
+      console.log("raiseSpeed"); 
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+
+  var shortcutRaiseSpeed = new gui.Shortcut(optionRaiseSpeed);
+  gui.App.registerGlobalHotKey(shortcutRaiseSpeed);
+
+// English Voice Shortcut
+  var optionVoiceAlex = {
+     key : "Ctrl+1",
+    active : function() {
+      setVoice('Alex');
+      console.log("optionVoiceAlex"); 
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+
+  var shortcutVoiceAlex = new gui.Shortcut(optionVoiceAlex);
+  gui.App.registerGlobalHotKey(shortcutVoiceAlex);
+
+// Italian Voice Shortcut
+    var optionVoiceLuca = {
+     key : "Ctrl+2",
+    active : function() {
+      setVoice('Luca');
+      console.log("optionVoiceAlex"); 
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+  var shortcutVoiceLuca = new gui.Shortcut(optionVoiceLuca);
+  gui.App.registerGlobalHotKey(shortcutVoiceLuca);
+
+// Spanish Voice Shortcut
+    var optionVoiceJeorge = {
+     key : "Ctrl+3",
+    active : function() {
+      setVoice('Jorge');
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+  var shortcutVoiceJeorge = new gui.Shortcut(optionVoiceJeorge);
+  gui.App.registerGlobalHotKey(shortcutVoiceJeorge);
+
+//  Voice Shortcut
+    var optionVoiceThomas = {
+     key : "Ctrl+4",
+    active : function() {
+      setVoice('Thomas');
+    },
+    failed : function(msg) {
+      // :(, fail to register the |key| or couldn't parse the |key|.
+      console.log(msg);
+    }
+  };
+  var shortcutVoiceThomas = new gui.Shortcut(optionVoiceThomas);
+  gui.App.registerGlobalHotKey(shortcutVoiceThomas);
+
+
+
+// //Minimise window, shortcut
+//     var optionMinimise = {
+//      key : "Ctrl+m",
+//     active : function() {
+//      alert('Minimise app');
+//     },
+//     failed : function(msg) {
+//       // :(, fail to register the |key| or couldn't parse the |key|.
+//       console.log(msg);
+//     }
+//   };
+//   var shortcutMinimise = new gui.Shortcut(optionMinimise);
+//   gui.App.registerGlobalHotKey(shortcutMinimise);
+
+
+
+// //quit window, shortcut
+//     var optionQuit = {
+//      key : "Ctrl+q",
+//     active : function() {
+//      alert('closingApp');
+//     },
+//     failed : function(msg) {
+//       // :(, fail to register the |key| or couldn't parse the |key|.
+//       console.log(msg);
+//     }
+//   };
+//   var shortcutQuit = new gui.Shortcut(optionQuit);
+//   gui.App.registerGlobalHotKey(shortcutQuit);
+
+
+
+// gui.Window.open('./preview.html',{toolbar:false,frame:true});
+
+    var ncp = require("copy-paste");
+    var say = require('say');
+    // say.sync();
+    //set initial speed 
+    var initialSpeed = 400;   
+    document.getElementById('speedInput').value= initialSpeed;
+    var speed = document.getElementById('speedInput').value;
+
+    var textArea = document.getElementById('textArea');
+    var playBtn = document.getElementById('play');
+
+    var playing = false;
+    var pauded = false;
+    var currentSentence="";
+    var selectedTextAr= [];
+  /**
+  * Speed control functions
+  */
+  function getSpeed(){
+    speed = document.getElementById('speedInput').value;
+    return speed;
+  }
+
+  function setSpeed(sp){
+    speed =parseInt(sp);
+    document.getElementById('speedInput').value="";
+    document.getElementById('speedInput').value=speed;
+  }
+
+  function lowerSpeed(){
+    s =parseInt(speed);
+    s-=100;
+    speed = s;
+    setSpeed(speed);
+  }
+
+  function raiseSpeed(){
+    s =parseInt(speed);
+    s+=100;
+    speed = s;
+    setSpeed(speed);
+  }
+
+  /**
+  * gets voice from dropdown
+  */
+  function getSelectedVoice(){
+    var e = document.getElementById('voices')
+    var voice = e.options[e.selectedIndex].value;
+    return voice;
+  }
+
+  function setVoice(v){
+    var e = document.getElementById('voices');
+    for(var i=0; i< e.options.length; i++ ){
+      if(e.options[i].value == v ){
+         e.selectedIndex = i;
+         voice = v; 
+      }
+    }  
+  }
+
+  /**
+  * playback controlls.
+  */
+ 
+  function play(){
+    if(playing){
+      // alert("already reading");
+      stop();
+      playing = false;
+    }else{
+      playing = true;
+      playText();
+    }
+  }
+
+
+function playText(){
+  var selectedText = ncp.paste();
+  textArea.value = selectedText;
+  var voice = getSelectedVoice();
+  var speed = getSpeed();
+  
+  say.speak(voice, selectedText,  function(){
+       playing = false;
+       say.stop();
+      }, speed);
+  //// to support pausing
+  // var text = selectedText.split(". ");
+  // var s=0;
+  // selectedTextAr= text;
+  // sayIt(voice, s, text, speed );
+  }
+
+  /*
+* synchronouse say.speak using recursion
+* takes in the voice
+* s is a counter integer
+* and text is an array of strings you wish to have spoken.
+*/
+// function sayIt(voice,s, text, speed) {
+  
+//    say.speak(voice, text[s],function () {
+//      s++;
+//      currentSentence=text[s];
+     
+//      if(s >= text.length) {
+//       // currentSentence"";
+//       // selectedTextAr=[];
+//        process.exit(0);
+//      }
+//      sayIt(voice,s,text,speed);
+//    }, speed); 
+
+// }
+ 
+
+
+  function stop(){
+   playing = false;
+    say.stop();
+
+  // alert('stop');
+  }
+
+
+ //  function pauseText(){
+
+ //    playing = true;
+ //    paused = true;
+ //    // child.kill("SIGTERM");
+ //    // console.log(child)
+ //    // // proc.kill('SIGINT');
+ //    say.stop();
+ //  }
+
+
+
+
+ // function pause(){
+ //    if(playing){
+ //      // alert("already reading");
+ //      alert(' playing')
+ //      s = selectedTextAr.indexOf(currentSentence)
+ //      paused = true;
+ //      pauseText();
+ //    }else{
+ //      if(paused){
+ //         s = selectedTextAr.indexOf(currentSentence);
+ //         text = selectedTextAr;
+ //        sayIt(voice, s, text, speed );
+ //        paused = false;
+ //      }
+ //      console.log('not playing');
+ //      //Do nothing as if it's not playing can't be paused.
+ //    }
+ //  }
+
+
+
+
+
+// });
+
+    </script>
+  </body>
+</html>
